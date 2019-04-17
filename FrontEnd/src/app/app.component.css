@@ -1,0 +1,35 @@
+.example-card {
+  width: 300px;
+}
+
+.Refresh {
+  margin-left: 20px;
+}
+
+.example-header-image {
+  background-image: url('https://material.angular.io/assets/img/examples/shiba1.jpg');
+  background-size: cover;
+}
+
+.myGridList {
+  height: 100%;
+}
+
+.mat-button {
+  background-color: cornflowerblue;
+  color: white;
+}
+
+.mat-slider {
+  background-color: aliceblue;
+  margin-left: 10px;
+
+}
+
+.mat-slider-horizontal {
+  width: 280px;
+}
+
+.mat-slider-vertical {
+  height: 40px;
+}
