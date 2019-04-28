@@ -33,10 +33,11 @@ from firebase_admin import db
 import datetime
 import json
 from datetime import datetime as dt
-from datetime import date
+from datetime import date, timedelta
 
 
-cred = credentials.ApplicationDefault()
+cred = credentials.Certificate('Private/iotfinal-a2cfe-firebase-adminsdk-7z11c-4f94113d5f.json')
+#cred = credentials.ApplicationDefault()
 firebase_admin.initialize_app(cred, {
   'projectId': "iotfinal-a2cfe",
   'databaseURL': "https://iotfinal-a2cfe.firebaseio.com",
@@ -90,7 +91,7 @@ def get_active_times(uuid):
 
 
 # This will return the average active time for a user in any given day
-def average_activity_span(uuid):
+def average_daily_activity_span(uuid):
     daily_data = get_active_times(uuid)
     day_spans = []
 
@@ -100,6 +101,33 @@ def average_activity_span(uuid):
 
     # Return the average timedelta for all days
     return sum(day_spans, datetime.timedelta(0)) / len(day_spans)
+
+
+# This will return the average active time for a user overall within an activity period of 30 mins
+def activity_spans(uuid):
+    # Get a dictionary of all instances of finding a user
+    # {image: camera id, timestamp: year-month-day hour:minute:second
+    ref = db.reference('people/' + uuid + '/visits').get()
+    sighting_times = []
+    for sighting in ref.keys():
+        sighting_times.append(dt.strptime(ref[sighting]['timestamp'][:-7], '%Y-%m-%d %H:%M:%S'))
+
+    sighting_times = sorted(sighting_times)
+    encounters = {}
+    encounter_id = 1
+    for current in sighting_times:
+        encounters.setdefault(encounter_id, {'first': current, 'last': current})
+
+        if current - encounters[encounter_id]['last'] < datetime.timedelta(minutes=30):
+            encounters[encounter_id]['last'] = current
+        else:
+            encounter_id += 1
+            encounters.setdefault(encounter_id, {'first': current, 'last': current})
+    output = []
+    # Convert for compatibility
+    for id in encounters.keys():
+        output.append({'start': str(encounters[id]['first']), 'end': str(encounters[id]['last'])})
+    return output
 
 
 def get_time_between_cameras(uuid, camera1, camera2):
@@ -119,4 +147,4 @@ def get_correlated_users(uuid, num_results):
 
 # Call functions for a quick and dirty test.
 # TODO: Check to make sure results are correct.
-print(average_activity_span('63094e87-8b1e-4cfa-a64e-b2f338628227'))
+print(activity_spans('0dff89db-1706-4e63-a6e9-cb055e246f18'))
