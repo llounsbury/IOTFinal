@@ -36,8 +36,7 @@ from datetime import datetime as dt
 from datetime import date, timedelta
 
 
-cred = credentials.Certificate('Private/iotfinal-a2cfe-firebase-adminsdk-7z11c-4f94113d5f.json')
-#cred = credentials.ApplicationDefault()
+cred = credentials.ApplicationDefault()
 firebase_admin.initialize_app(cred, {
   'projectId': "iotfinal-a2cfe",
   'databaseURL': "https://iotfinal-a2cfe.firebaseio.com",
