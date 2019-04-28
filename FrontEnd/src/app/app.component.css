@@ -33,3 +33,16 @@
 .mat-slider-vertical {
   height: 40px;
 }
+
+.example-spacer {
+  flex: 1 1 auto;
+}
+
+.del {
+  position: absolute; right: 0;
+  background-color: red;
+}
+
+.about {
+  background-color: forestgreen;
+}
