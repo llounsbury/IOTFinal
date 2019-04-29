@@ -43,19 +43,22 @@ export class AppComponent implements OnInit {
         let temp = value;
         temp['id'] = key;
         this.orderedPeople.push(temp);
-        for (let [key2, value2] of Object.entries(this.people[key].visits)) {
+        Object.keys(this.people[key].visits).forEach( key2 => {
           const name = key2 + '.jpg';
           storage.ref().child(name).getDownloadURL().then(url => {
             const sub = 'url';
             this.people[key].visits[key2][sub] = url;
             this.people[key].visar.push(this.people[key].visits[key2]);
             this.people[key].max_slide = this.people[key].visar.length - 1;
+            //console.log(this.people[key].visar.length);
+            this.people[key]['visar'].sort(this.compare_visit);
           });
-        }
-        this.people[key]['visar'] = (this.people[key]['visar']).sort(this.compare_most_recent_visits);
+        });
       }
-      this.orderedPeople = (this.orderedPeople).sort(this.compare_most_recent);
-      console.log(this.orderedPeople);
+      this.orderedPeople.sort(this.compare_most_recent);
+      setTimeout(() => {
+        console.log(this.orderedPeople);
+      }, 1000);
     });
   }
 
@@ -101,9 +104,9 @@ export class AppComponent implements OnInit {
     return comparison;
   }
 
-  compare_most_recent_visits(a, b) {
-    const sa = a.timestamp;
-    const sb = b.timestamp;
+  compare_visit(a, b) {
+    const sa = a['timestamp'];
+    const sb = b['timestamp'];
     let comparison = 0;
     if (sa < sb) {
       comparison = 1;
@@ -111,8 +114,9 @@ export class AppComponent implements OnInit {
       comparison = -1;
     }
     return comparison;
-
   }
+
+
 
   openNameDialog(person): void {
     const dialogRef = this.dialog.open(SetNameComponent, {
