@@ -10,16 +10,12 @@ import datetime
 import os
 
 
-
 cred = credentials.ApplicationDefault()
 firebase_admin.initialize_app(cred, {
   'projectId': "iotfinal-a2cfe",
   'databaseURL': "https://iotfinal-a2cfe.firebaseio.com",
   'storageBucket': "iotfinal-a2cfe.appspot.com"
 })
-
-# REMOVE ALL PEOPLE & START OVER.
-db.reference('people').delete()
 
 processed_dic = db.reference('people').get()
 processed = []
@@ -36,12 +32,11 @@ else:
 
 while(1):
     unprocessed = db.reference('unprocessed').get()
-    print('Waiting ', str(datetime.datetime.utcnow()))
     if not unprocessed:
-        time.sleep(5)
+        time.sleep(60)
     else:
         for key, item in unprocessed.items():
-            print('PROCESSING FACE : ', key)
+            print('PROCESSING FACE')
             db.reference('unprocessed').child(key).delete()
             db.reference('identified').child(key).set(item)
             encoding = np.array(item['encoding'])
@@ -57,18 +52,15 @@ while(1):
                 person = processed_data[bm_index]
                 person['visits'][key] = item
                 person['visits'][key].pop('encoding')
-                person['most_recent'] = item['timestamp']
                 person_db = db.reference('people').child(processed_data[bm_index]['id']).get()
                 db.reference('people').child(processed_data[bm_index]['id']).child('visits').set(person['visits'])
-                db.reference('people').child(processed_data[bm_index]['id']).child('most_recent').set(person['most_recent'])
             else:
                 id = str(str(uuid.uuid4()))
                 info = {}
                 info['visits'] = {key: item}
                 info['visits'][key].pop('encoding')
-                info['name'] = 'unknown'
+                info['name'] = 'unkown'
                 info['encoding'] = encoding.tolist()
-                info['most_recent'] = item['timestamp']
                 db.reference('people').child(id).set(info)
                 processed.append(encoding)
                 info['encoding'] = encoding
