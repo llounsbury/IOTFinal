@@ -8,6 +8,7 @@ import { SetNameComponent } from './set-name/set-name.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { PersonInfoComponent } from './person-info/person-info.component';
+import { HttpClientModule } from '@angular/common/http';
 
 export interface Person {
   name: string;
@@ -32,7 +33,8 @@ export interface Person {
     MatDialogModule,
     MatInputModule,
     FormsModule,
-    BrowserAnimationsModule
+    BrowserAnimationsModule,
+    HttpClientModule
   ],
   providers: [],
   bootstrap: [AppComponent],

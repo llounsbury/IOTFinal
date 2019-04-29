@@ -1,7 +1,7 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import {MAT_DIALOG_DATA, MatDialogRef} from '@angular/material';
 import * as Chart from 'chart.js';
-import {combineAll} from 'rxjs/operators';
+import { HttpClient } from '@angular/common/http';
 
 
 
@@ -12,12 +12,20 @@ import {combineAll} from 'rxjs/operators';
 })
 export class PersonInfoComponent implements OnInit {
   chart: Chart;
+  api_data: any;
 
   constructor(
+      private http: HttpClient,
       public dialogRef: MatDialogRef<PersonInfoComponent>,
       @Inject(MAT_DIALOG_DATA) public data) {}
 
   ngOnInit() {
+    const my_url = 'http://localhost:5000/' + this.data.id;
+    console.log(my_url);
+    this.api_data = this.http.get(my_url).subscribe( res => {
+          console.log(res);
+        }
+    );
     setTimeout(() => {
       this.generateChart();
     }, 500);

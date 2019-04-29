@@ -1,31 +1,39 @@
 <!--The content below is only a placeholder and can be replaced.-->
 <mat-toolbar>
-  Recognized Faces
-  <button mat-button class="Refresh" (click)="getData()" >Refresh</button>
+    Recognized Faces
+    <button mat-button class="Refresh" (click)="getData()">Refresh</button>
 </mat-toolbar>
 
-<div style="background: lightgray"  #gridView *ngIf="orderedPeople">
-<mat-grid-list [cols]="selfColumns" rowHeight="600px" (window:resize)="onResize($event)">
-  <mat-grid-tile *ngFor="let person of orderedPeople">
-  <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-title> {{people[person.id].name}}</mat-card-title>
-      <mat-card-subtitle>Times Identified: {{objectLen(people[person.id].visits)}}</mat-card-subtitle>
-    </mat-card-header>
-    <img *ngIf="people[person.id] && people[person.id].visar[0]" mat-card-image src="{{people[person.id].visar[people[person.id].selected].url}}" alt="PERSON">
-    <mat-card-subtitle *ngIf="people[person.id] && people[person.id].visar[0]">{{people[person.id].visar[people[person.id].selected].timestamp}} UTC</mat-card-subtitle>
-    <mat-card-content>
-      <mat-slider [disabled]="objectLen(people[person.id].visits) == 1" [max]="people[person.id].max_slide" (input)="updateImage(person.id, $event.value)"></mat-slider>
-    </mat-card-content>
-    <mat-card-actions>
-      <button *ngIf="person.name === 'unkown' || person.name === 'unknown' || !person.name" mat-button (click)="openNameDialog(people[person.id], person.id)">SET NAME</button>
-      <button class='about' *ngIf="person.name !== 'unkown' && person.name !== 'unknown' && person.name" mat-button (click)="openChartDialog(people[person.id])">ABOUT</button>
-      <button mat-button class="del">DELETE</button>
-    </mat-card-actions>
-  </mat-card>
-  </mat-grid-tile>
-</mat-grid-list>
-
-
-<router-outlet></router-outlet>
+<div style="background: lightgray" #gridView *ngIf="orderedPeople">
+    <mat-grid-list [cols]="selfColumns" rowHeight="600px" (window:resize)="onResize($event)">
+        <mat-grid-tile *ngFor="let person of orderedPeople">
+            <mat-card class="example-card">
+                <mat-card-header>
+                    <mat-card-title> {{people[person.id].name}}</mat-card-title>
+                    <mat-card-subtitle>Times Identified: {{objectLen(people[person.id].visits)}}</mat-card-subtitle>
+                </mat-card-header>
+                <img *ngIf="people[person.id] && people[person.id].visar[0]" mat-card-image
+                     src="{{people[person.id].visar[people[person.id].selected].url}}" alt="PERSON">
+                <mat-card-subtitle
+                        *ngIf="people[person.id] && people[person.id].visar[0]">{{people[person.id].visar[people[person.id].selected].timestamp}}
+                    UTC
+                </mat-card-subtitle>
+                <mat-card-content>
+                    <mat-slider [disabled]="objectLen(people[person.id].visits) == 1"
+                                [max]="people[person.id].max_slide"
+                                (input)="updateImage(person.id, $event.value)"></mat-slider>
+                </mat-card-content>
+                <mat-card-actions>
+                    <button *ngIf="person.name === 'unkown' || person.name === 'unknown' || !person.name" mat-button
+                            (click)="openNameDialog(people[person.id], person.id)">SET NAME
+                    </button>
+                    <button class='about' *ngIf="person.name !== 'unkown' && person.name !== 'unknown' && person.name"
+                            mat-button (click)="openChartDialog(people[person.id], person.id)">ABOUT
+                    </button>
+                    <button mat-button class="del">DELETE</button>
+                </mat-card-actions>
+            </mat-card>
+        </mat-grid-tile>
+    </mat-grid-list>
+    <router-outlet></router-outlet>
 </div>

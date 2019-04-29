@@ -134,7 +134,8 @@ export class AppComponent implements OnInit {
     });
     }
 
-  openChartDialog(person): void {
+  openChartDialog(person, id): void {
+    person['id'] = id;
     const dialogRef = this.dialog.open(PersonInfoComponent, {
       width: (document.body.clientWidth - 50) as unknown as string,
       data: person
