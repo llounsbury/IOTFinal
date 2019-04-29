@@ -15,7 +15,7 @@
         </div>
         </mat-tab>
         <mat-tab label="Relations">
-            <mat-grid-list *ngIf="api_data" [cols]="5" rowHeight="400px">
+            <mat-grid-list *ngIf="api_data" [cols]="5" rowHeight="320px">
                 <mat-grid-tile *ngFor="let c_person of api_data.correlated_users">
                     <mat-card *ngIf="c_person.score > 0" class="example-card">
                         <mat-card-header>

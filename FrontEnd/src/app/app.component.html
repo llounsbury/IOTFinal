@@ -29,7 +29,7 @@
                     <button class='about' *ngIf="person.name !== 'unkown' && person.name !== 'unknown' && person.name"
                             mat-button (click)="openChartDialog(people[person.id], person.id)">ABOUT
                     </button>
-                    <button mat-button class="del">DELETE</button>
+                    <button mat-button class="del" (click)="tag(person.id)">TAG</button>
                 </mat-card-actions>
             </mat-card>
         </mat-grid-tile>

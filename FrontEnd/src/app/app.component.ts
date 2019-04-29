@@ -156,6 +156,10 @@ export class AppComponent implements OnInit {
     dialogRef.afterClosed().subscribe(result => {
     });
   }
+
+  tag(id) {
+    firebase.database().ref('/tag').set(id);
+  }
 }
 
 
