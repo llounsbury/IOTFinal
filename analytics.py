@@ -33,7 +33,8 @@ from firebase_admin import db
 import datetime
 import json
 from datetime import datetime as dt
-from datetime import date
+from datetime import date, timedelta
+from operator import itemgetter
 
 
 cred = credentials.ApplicationDefault()
@@ -53,7 +54,7 @@ def get_expected_sighting_time(uuid, camera):
         print(key) # For testing
         print(ref[key]['camera'])
         if ref[key]['camera'] == camera:
-            times_to_avg.append(dt.strptime(ref[key]['timestamp'][:-7], '%Y-%m-%d %H:%M:%S')) # Strips fractional seconds
+            times_to_avg.append(dt.strptime(ref[key]['timestamp'], '%Y-%m-%d %H:%M:%S')) # Strips fractional seconds
     avg = 0
     # TODO? Come up with more efficient alg for finding time using panda?
     for time in times_to_avg:
@@ -76,7 +77,7 @@ def get_active_times(uuid):
     # Build a dictionary structured as follows: {date: {'first': first sighting, 'last': last sighting}}
     daily_data = {}
     for sighting in ref.keys():
-        current = dt.strptime(ref[sighting]['timestamp'][:-7], '%Y-%m-%d %H:%M:%S')
+        current = dt.strptime(ref[sighting]['timestamp'], '%Y-%m-%d %H:%M:%S')
         daily_data.setdefault(current.date(), {'first': current.time(), 'last': current.time()})
 
         if daily_data[current.date()]['first'] > current.time():
@@ -90,7 +91,7 @@ def get_active_times(uuid):
 
 
 # This will return the average active time for a user in any given day
-def average_activity_span(uuid):
+def average_daily_activity_span(uuid):
     daily_data = get_active_times(uuid)
     day_spans = []
 
@@ -100,6 +101,63 @@ def average_activity_span(uuid):
 
     # Return the average timedelta for all days
     return sum(day_spans, datetime.timedelta(0)) / len(day_spans)
+
+
+# This will return the average active time for a user overall within an activity period of 30 mins
+def activity_spans(uuid):
+    # Get a dictionary of all instances of finding a user
+    # {image: camera id, timestamp: year-month-day hour:minute:second
+    ref = db.reference('people/' + uuid + '/visits').get()
+    sighting_times = []
+    for sighting in ref.keys():
+        sighting_times.append(dt.strptime(ref[sighting]['timestamp'][:-7], '%Y-%m-%d %H:%M:%S'))
+
+    sighting_times = sorted(sighting_times)
+    encounters = {}
+    encounter_id = 1
+    for current in sighting_times:
+        encounters.setdefault(encounter_id, {'first': current, 'last': current})
+
+        if current - encounters[encounter_id]['last'] < datetime.timedelta(minutes=30):
+            encounters[encounter_id]['last'] = current
+        else:
+            encounter_id += 1
+            encounters.setdefault(encounter_id, {'first': current, 'last': current})
+    output = []
+    # Convert for compatibility
+    for id in encounters.keys():
+        output.append({'start': str(encounters[id]['first']), 'end': str(encounters[id]['last'])})
+    return output
+
+
+def camera_order_frequency(uuid):
+    # Get a dictionary of all instances of finding a user
+    # {image: camera id, timestamp: year-month-day hour:minute:second
+    ref = db.reference('people/' + uuid + '/visits').get()
+    sighting_times = []
+    for sighting in ref.keys():
+        sighting_times.append([dt.strptime(ref[sighting]['timestamp'], '%Y-%m-%d %H:%M:%S'), ref[sighting]['camera']])
+
+    sighting_times.sort(key=itemgetter(0))
+
+    camera_distribution = {}
+    order = []
+    last_camera = None
+    prev_sighting = None
+    for sighting in sighting_times:
+
+        if prev_sighting is None or sighting[0] - prev_sighting[0] < datetime.timedelta(minutes=30):
+            if not sighting[1] == last_camera:
+                last_camera = sighting[1]
+                order.append(last_camera)
+                prev_sighting = sighting
+        else:
+            camera_distribution.setdefault(str(order), 0)
+            camera_distribution[str(order)] += 1
+            order = []
+            last_camera = None
+            prev_sighting = None
+    return camera_distribution
 
 
 def get_time_between_cameras(uuid, camera1, camera2):
@@ -118,5 +176,4 @@ def get_correlated_users(uuid, num_results):
 
 
 # Call functions for a quick and dirty test.
-# TODO: Check to make sure results are correct.
-print(average_activity_span('63094e87-8b1e-4cfa-a64e-b2f338628227'))
+
