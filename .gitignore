@@ -169,7 +169,7 @@ htmlcov/
 nosetests.xml
 coverage.xml
 *,cover
-
+Private
 
 node_modules/
 
