@@ -15,14 +15,14 @@ import {PersonInfoComponent} from './person-info/person-info.component';
 
 
 export class AppComponent implements OnInit {
+
+  constructor(public dialog: MatDialog) {}
   public static people: any;
   title = 'iot-fe';
   public selfColumns = 1;
   public people: any;
+  public allPeople: any;
   private orderedPeople = [];
-
-  constructor(public dialog: MatDialog) {}
-
 
   ngOnInit() {
     this.selfColumns = Math.floor(document.body.clientWidth / 325);
@@ -32,9 +32,17 @@ export class AppComponent implements OnInit {
   getData() {
     const config = {
     };
-
     firebase.initializeApp(config);
     const storage = firebase.storage();
+    firebase.database().ref('/people').limitToLast(10000).once('value').then(snapshot => {
+      this.allPeople = snapshot.val();
+      Object.keys(this.allPeople).forEach( person => {
+        const name = Object.keys(this.allPeople[person].visits)[0] + '.jpg';
+        storage.ref().child(name).getDownloadURL().then(url => {
+          this.allPeople[person]['url'] = url;
+        });
+        });
+      });
     firebase.database().ref('/people').orderByChild('most_recent').limitToLast(20).once('value').then(snapshot => {
       this.people = snapshot.val();
       for (let [key, value] of Object.entries(this.people)) {
@@ -120,7 +128,7 @@ export class AppComponent implements OnInit {
 
   openNameDialog(person, id): void {
     const dialogRef = this.dialog.open(SetNameComponent, {
-      width: '250px',
+      width: '600px',
       data: {name: person.name}
     });
 
@@ -135,10 +143,13 @@ export class AppComponent implements OnInit {
     }
 
   openChartDialog(person, id): void {
-    person['id'] = id;
+    let allData = {};
+    allData['person'] = person;
+    allData['id'] = id;
+    allData['people'] = this.allPeople;
     const dialogRef = this.dialog.open(PersonInfoComponent, {
       width: (document.body.clientWidth - 50) as unknown as string,
-      data: person
+      data: allData
     });
 
     dialogRef.afterClosed().subscribe(result => {

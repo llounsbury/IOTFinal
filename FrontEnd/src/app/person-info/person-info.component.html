@@ -1,6 +1,18 @@
 <mat-card-title>Times Identified {{data.name}}</mat-card-title>
 <div>
-  <canvas id="myChart">
+  <canvas id="myChart" class="chart">
     {{chart}}
   </canvas>
+  <mat-grid-list *ngIf="api_data" [cols]="5" rowHeight="300px">
+    <mat-grid-tile *ngFor="let c_person of api_data.correlated_users">
+      <mat-card class="example-card">
+    <mat-card-header>
+      <mat-card-title> {{c_person.name}}</mat-card-title>
+      <mat-card-subtitle>Score: {{c_person.score}}</mat-card-subtitle>
+    </mat-card-header>
+      <img mat-card-image src="{{c_person.url}}" alt="PERSON">
+      </mat-card>
+    </mat-grid-tile>
+  </mat-grid-list>
+
 </div>

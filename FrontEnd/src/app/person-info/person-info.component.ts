@@ -13,6 +13,8 @@ import { HttpClient } from '@angular/common/http';
 export class PersonInfoComponent implements OnInit {
   chart: Chart;
   api_data: any;
+  corr_users: any;
+  load_page = false;
 
   constructor(
       private http: HttpClient,
@@ -21,10 +23,21 @@ export class PersonInfoComponent implements OnInit {
 
   ngOnInit() {
     const my_url = 'http://localhost:5000/' + this.data.id;
-    console.log(my_url);
+    console.log(this.data);
     this.api_data = this.http.get(my_url).subscribe( res => {
           console.log(res);
-        }
+          this.api_data = res;
+          this.api_data.correlated_users.forEach( correlation => {
+            Object.keys(correlation).forEach( instance => {
+              console.log(instance);
+              console.log(this.data.people[instance]);
+              correlation['name'] = this.data.people[instance].name;
+              correlation['url'] = this.data.people[instance].url;
+              correlation['score'] = correlation[instance].substring(0, 4);
+            });
+            console.log(this.api_data.correlated_users);
+          });
+    }
     );
     setTimeout(() => {
       this.generateChart();
@@ -36,7 +49,7 @@ export class PersonInfoComponent implements OnInit {
   }
 
   generateChart() {
-    console.log(this.data);
+    console.log(this.data.person);
     const color = ['rgba(153,255,51,0.4)', 'rgba(255,153,0,0.4)', 'rgb(140, 255, 251)'];
     const chartDataSets = [];
     const cameraDataSet = {
@@ -47,7 +60,7 @@ export class PersonInfoComponent implements OnInit {
     chartDataSets[0].label = 'Camera 1';
     chartDataSets[0].backgroundColor = color[0];
 
-    this.data.visar.forEach( visit => {
+    this.data.person.visar.forEach( visit => {
       const day = new Date(visit.timestamp + ' UTC').getDay();
       if (!chartDataSets[visit.camera - 1]) {
         chartDataSets[visit.camera - 1] = JSON.parse(JSON.stringify(cameraDataSet));
