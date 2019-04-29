@@ -18,7 +18,7 @@
       <mat-slider [disabled]="objectLen(people[person.id].visits) == 1" [max]="people[person.id].max_slide" (input)="updateImage(person.id, $event.value)"></mat-slider>
     </mat-card-content>
     <mat-card-actions>
-      <button *ngIf="person.name === 'unkown' || person.name === 'unknown' || !person.name" mat-button (click)="openNameDialog(people[person.id])">SET NAME</button>
+      <button *ngIf="person.name === 'unkown' || person.name === 'unknown' || !person.name" mat-button (click)="openNameDialog(people[person.id], person.id)">SET NAME</button>
       <button class='about' *ngIf="person.name !== 'unkown' && person.name !== 'unknown' && person.name" mat-button (click)="openChartDialog(people[person.id])">ABOUT</button>
       <button mat-button class="del">DELETE</button>
     </mat-card-actions>

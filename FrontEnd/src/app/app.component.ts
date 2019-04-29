@@ -118,7 +118,7 @@ export class AppComponent implements OnInit {
 
 
 
-  openNameDialog(person): void {
+  openNameDialog(person, id): void {
     const dialogRef = this.dialog.open(SetNameComponent, {
       width: '250px',
       data: {name: person.name}
@@ -130,8 +130,9 @@ export class AppComponent implements OnInit {
       if (!person.name) {
         person.name = 'unknown';
       }
+      firebase.database().ref('/people').child(id).child('name').set(person.name);
     });
-  }
+    }
 
   openChartDialog(person): void {
     const dialogRef = this.dialog.open(PersonInfoComponent, {
@@ -140,7 +141,6 @@ export class AppComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      console.log('The dialog was closed');
     });
   }
 }
