@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import {MatButtonModule, MatCardModule, MatGridListModule, MatSliderModule, MatToolbarModule, MatDialogModule, MatInputModule} from '@angular/material';
+import {MatButtonModule, MatCardModule, MatGridListModule, MatSliderModule, MatToolbarModule, MatDialogModule, MatInputModule, MatTabsModule, MatListModule} from '@angular/material';
 import { SetNameComponent } from './set-name/set-name.component';
 import { FormsModule } from '@angular/forms';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -34,7 +34,9 @@ export interface Person {
     MatInputModule,
     FormsModule,
     BrowserAnimationsModule,
-    HttpClientModule
+    HttpClientModule,
+    MatTabsModule,
+    MatListModule
   ],
   providers: [],
   bootstrap: [AppComponent],

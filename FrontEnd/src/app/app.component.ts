@@ -32,6 +32,7 @@ export class AppComponent implements OnInit {
   getData() {
     const config = {
     };
+
     firebase.initializeApp(config);
     const storage = firebase.storage();
     firebase.database().ref('/people').limitToLast(10000).once('value').then(snapshot => {
@@ -43,7 +44,7 @@ export class AppComponent implements OnInit {
         });
         });
       });
-    firebase.database().ref('/people').orderByChild('most_recent').limitToLast(20).once('value').then(snapshot => {
+    firebase.database().ref('/people').orderByChild('most_recent').limitToLast(50).once('value').then(snapshot => {
       this.people = snapshot.val();
       for (let [key, value] of Object.entries(this.people)) {
         this.people[key].visar = [];

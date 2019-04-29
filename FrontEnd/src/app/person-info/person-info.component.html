@@ -1,18 +1,57 @@
-<mat-card-title>Times Identified {{data.name}}</mat-card-title>
 <div>
-  <canvas id="myChart" class="chart">
-    {{chart}}
-  </canvas>
-  <mat-grid-list *ngIf="api_data" [cols]="5" rowHeight="300px">
-    <mat-grid-tile *ngFor="let c_person of api_data.correlated_users">
-      <mat-card class="example-card">
-    <mat-card-header>
-      <mat-card-title> {{c_person.name}}</mat-card-title>
-      <mat-card-subtitle>Score: {{c_person.score}}</mat-card-subtitle>
-    </mat-card-header>
-      <img mat-card-image src="{{c_person.url}}" alt="PERSON">
-      </mat-card>
-    </mat-grid-tile>
-  </mat-grid-list>
+    <mat-tab-group (selectedTabChange)="startChart2($event)">
+        <mat-tab label="Count">
+        <div>
+            <canvas id="myChart">
+                {{chart}}
+            </canvas>
+        </div>
+        </mat-tab>
+        <mat-tab label="Times">
+        <div>
+            <canvas id="myChart2">
+                {{chart2}}
+            </canvas>
+        </div>
+        </mat-tab>
+        <mat-tab label="Relations">
+            <mat-grid-list *ngIf="api_data" [cols]="5" rowHeight="400px">
+                <mat-grid-tile *ngFor="let c_person of api_data.correlated_users">
+                    <mat-card *ngIf="c_person.score > 0" class="example-card">
+                        <mat-card-header>
+                            <mat-card-title> {{c_person.name}}</mat-card-title>
+                            <mat-card-subtitle>Score: {{c_person.score}}</mat-card-subtitle>
+                        </mat-card-header>
+                        <img mat-card-image src="{{c_person.url}}" alt="PERSON" class="cimage">
+                    </mat-card>
+                </mat-grid-tile>
+            </mat-grid-list>
+        </mat-tab>
+        <mat-tab label="Other">
+                <mat-card>
+                    <mat-card-title>
+                        Times Most Likley to be Seen
+                    </mat-card-title>
+                    <mat-card-content>
+                        <mat-list-item *ngIf="api_data.cluster" role="listitem">{{api_data.cluster[0]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cluster" role="listitem">{{api_data.cluster[1]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cluster" role="listitem">{{api_data.cluster[2]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cluster" role="listitem">{{api_data.cluster[3]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cluster" role="listitem">{{api_data.cluster[4]}}</mat-list-item>
+                    </mat-card-content>
+                </mat-card>
+                    <mat-card>
+                    <mat-card-title>
+                        Camera Order
+                    </mat-card-title>
+                    <mat-card-content>
+                        <mat-list-item *ngIf="api_data.cameras && api_data.cameras['[1]']" role="listitem">1 Only: {{api_data.cameras["[1]"]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cameras && api_data.cameras['[2]']" role="listitem">2 Only: {{api_data.cameras["[2]"]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cameras && api_data.cameras['[12]']" role="listitem">1 -> 2: {{api_data.cameras["[12]"]}}</mat-list-item>
+                        <mat-list-item *ngIf="api_data.cameras && api_data.cameras['[21]']" role="listitem">2 -> 1:{{api_data.cameras["[21]"]}}</mat-list-item>
+                    </mat-card-content>
+                    </mat-card>
+        </mat-tab>
+    </mat-tab-group>
 
 </div>
